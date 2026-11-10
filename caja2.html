@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mazo VIP de Comadres & Parcas 🃏✨</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @keyframes sparkleFloat {
+            0% { transform: translateY(0px) scale(0.8); opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-30px) scale(1.2); opacity: 0; }
+        }
+        .sparkle {
+            position: absolute;
+            background-color: #facc15;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #facc15, 0 0 20px #e879f9;
+            animation: sparkleFloat 4s ease-in-out infinite alternate;
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(250, 204, 21, 0.4), inset 0 0 15px rgba(250, 204, 21, 0.2);
+        }
+
+        /* Estilo para girar la carta en 3D */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .card-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen font-sans flex flex-col justify-between items-center relative overflow-x-hidden selection:bg-purple-500 selection:text-white">
+
+    <!-- Background Sparkles & Glow -->
+    <div id="sparkles-container" class="fixed inset-0 pointer-events-none z-0"></div>
+    <div class="fixed -top-24 -left-24 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+    <div class="fixed -bottom-24 -right-24 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-delay: 1.5s;"></div>
+
+    <!-- Top Navigation / Garlands -->
+    <header class="fixed top-0 inset-x-0 flex justify-between items-center px-6 py-3 z-30 backdrop-blur-sm bg-purple-950/20 border-b border-purple-500/20">
+        <a href="Index.html" class="group flex items-center gap-2 text-amber-300 font-bold text-xs uppercase border border-amber-400/40 px-3 py-1.5 rounded-full bg-purple-900/60 backdrop-blur-md shadow-lg transition-all hover:bg-amber-400 hover:text-slate-950">
+            <span>⬅️</span> Volver al VIP
+        </a>
+        <div class="text-amber-300 font-extrabold tracking-widest text-xs uppercase border border-amber-400/40 px-4 py-1.5 rounded-full bg-purple-900/60 backdrop-blur-md hidden md:block">
+            🃏 CAJA 2: 13 CARTAS DE COMADRES & PARCAS
+        </div>
+        <div class="flex gap-2">
+            <span class="w-3 h-3 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc] animate-ping"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-300 shadow-[0_0_10px_#facc15] animate-ping" style="animation-delay: 0.3s;"></span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 w-full max-w-5xl px-4 pt-24 pb-12 flex flex-col items-center gap-6 text-center my-auto">
+        
+        <!-- Header Title -->
+        <div class="space-y-2">
+            <span class="text-amber-400 font-bold text-xs tracking-widest uppercase bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30">
+                💀☕ Edición Especial: Parcas & Chismes
+            </span>
+            <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-amber-300 to-yellow-500">
+                Las 13 Cartas Secretas de la Muerte
+            </h1>
+            <p class="text-purple-300/80 text-sm md:text-base max-w-xl mx-auto">
+                Toca cada carta del mazo para voltearla. ¡Descubre los mejores memes de comadres, reportes de almas y exclusivas del inframundo entre tú (la Parca) y ella (la Muerte)!
+            </p>
+            <div class="text-amber-300 font-bold text-sm bg-purple-900/60 border border-purple-500/40 px-4 py-1.5 rounded-full shadow-md inline-block">
+                Cartas descubiertas: <span id="flipped-count" class="text-white text-base">0</span>/13
+            </div>
+        </div>
+
+        <!-- Grilla de las 13 Cartas -->
+        <div id="deck-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 w-full max-w-4xl py-4">
+            <!-- Las cartas se generan dinámicamente con JavaScript -->
+        </div>
+
+        <!-- Botón de Victoria Global -->
+        <div id="success-banner" class="hidden w-full max-w-md bg-purple-900/90 border-2 border-amber-400 rounded-2xl p-6 backdrop-blur-md shadow-2xl animate-bounce">
+            <h2 class="text-2xl font-black text-amber-300 mb-2">
+                👑 ¡Mazo Completo, Comadre Parca! 👑
+            </h2>
+            <p class="text-purple-100 text-sm mb-4">
+                Has recolectado todos los chismes y almas del año. ¡Feliz cumpleaños a la mejor Muerte del multiverso!
+            </p>
+            <a href="Index.html" class="inline-block bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black px-6 py-2.5 rounded-xl shadow-lg hover:scale-105 transition-all text-sm uppercase tracking-wide">
+                Volver al Menú VIP 🚀
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-4 text-center text-xs text-purple-400/60 border-t border-purple-900/40 w-full">
+        Diseñado con 💜 para el cumpleaños de Dey
+    </footer>
+
+    <!-- Script del Mazo de Cartas -->
+    <script>
+        // Base de datos de las 13 cartas (Dinámica Parca + Muerte + Comadres)
+        const cardsData = [
+            {
+                emoji: "☕💀",
+                title: "Carta 01: El Chisme del Mas Allá",
+                meme: "☕🧍‍♀️🧍‍♀️",
+                text: "Yo (la Parca) llegando a tu oficina con la guadaña en una mano y el chisme fresco del bloque B en la otra. 'Oye Dey, no me vas a creer quién se acaba de desmayar de la impresión'."
+            },
+            {
+                emoji: "📜💅",
+                title: "Carta 02: Reporte de Almas",
+                meme: "📋👀",
+                text: "Tú (la Muerte) revisando la lista de almas del día: 'A ver, amix, este man se portó mal, pero mira el chismesito que trajo en su testamento... ¿Lo perdonamos o nos lo llevamos de una vez?'"
+            },
+            {
+                emoji: "☕🤫",
+                title: "Carta 03: Modo Comadre Activo",
+                meme: "🫖🗣️",
+                text: "Cuando estamos a distancia pero el grupo de WhatsApp de la parquemia arde más que el fuego del inframundo. ¡Pásate los audios de 5 minutos ya!"
+            },
+            {
+                emoji: "👑🕶️",
+                title: "Carta 04: Las Jefas del Panteón",
+                meme: "😎✨",
+                text: "Nosotras caminando bien buchonas y elegantes por el cementerio mientras las almas penan al fondo. Nadie nos supera el estilo, hermana."
+            },
+            {
+                emoji: "☕🏃‍♀️",
+                title: "Carta 05: Café y Recolecta",
+                meme: "☕🪦",
+                text: "'Espérate, amix, déjame terminar mi té de cedrón bien agusto antes de ir por el alma de las 3:00 p.m.'. Las prioridades de la Muerte ante todo."
+            },
+            {
+                emoji: "📉🤡",
+                title: "Carta 06: La Realidad de la Parca",
+                meme: "💀📉",
+                text: "Yo intentando explicarte mis teorías existenciales y tú viéndome con cara de: 'Amiga, estás muy bonita pero ya cállate y pásame el chisme del vecino'."
+            },
+            {
+                emoji: "🔥💅",
+                title: "Carta 07: Ardiendo con Estilo",
+                meme: "🔥💁‍♀️",
+                text: "El infierno se está cayendo a pedazos, los demonios lloran y nosotras sentadas en el trono tomando café frío y criticando los outfits de los recién llegados."
+            },
+            {
+                emoji: "📱😂",
+                title: "Carta 08: El Mensaje a las 3 AM",
+                meme: "🌙📲",
+                text: "Tú mandándome un meme a medianoche sobre la decadencia humana y yo respondiéndote con tres párrafos de análisis sociológico de comadre."
+            },
+            {
+                emoji: "🪦☕",
+                title: "Carta 09: Multitasking Fúnebre",
+                meme: "💀 multitasking",
+                text: "Recolectando un alma con la mano izquierda, sosteniendo el café en la derecha y escribiendo en el grupo de chismes con el poder mental. ¡Poder de parca total!"
+            },
+            {
+                emoji: "👑🎂",
+                title: "Carta 10: ¡Feliz Cumple, Muerte!",
+                meme: "🎉🥳",
+                text: "Hoy la jefa suprema del inframundo cumple años. Se suspenden las cosechas de almas por 24 horas. ¡Habrá pastel y chismes hasta el amanecer!"
+            },
+            {
+                emoji: "🕵️‍♀️👀",
+                title: "Carta 11: Investigadoras VIP",
+                meme: "🔍🤫",
+                text: "Nosotras enterándonos de un chisme familiar antes de que los propios familiares se enteren. Las parcas más metiches y cotillas de todo el multiverso."
+            },
+            {
+                emoji: "☕💪",
+                title: "Carta 12: Resistencia de Comadre",
+                meme: "☕⚡",
+                text: "Aunque nos separe el mapa y los husos horarios, el chisme diario y la hermandad entre la Muerte y la Parca jamás prescriben. ¡Salud por eso!"
+            },
+            {
+                emoji: "🌟🏆",
+                title: "Carta 13: La Alianza Eterna",
+                meme: "🤝💀",
+                text: "Carta final desbloqueada: Que la vida (o la muerte) nos siga encontrando siempre con un buen té en la mano, listas para juzgar al mundo y reírnos juntas. ¡Te quiero, amix!"
+            }
+        ];
+
+        let flippedCount = 0;
+        const totalCards = cardsData.length;
+        const deckGrid = document.getElementById('deck-grid');
+
+        // Generar las 13 cartas en el HTML
+        cardsData.forEach((data, index) => {
+            const cardWrapper = document.createElement('div');
+            cardWrapper.className = 'card perspective-1000 w-full h-56 cursor-pointer select-none';
+            cardWrapper.onclick = () => flipCard(cardWrapper, index);
+
+            cardWrapper.innerHTML = `
+                <div class="card-inner relative w-full h-full rounded-2xl shadow-xl">
+                    <!-- Portada de la Carta (Front) -->
+                    <div class="card-front absolute inset-0 bg-gradient-to-br from-purple-900 to-purple-950 border-2 border-amber-400/60 rounded-2xl p-4 flex flex-col items-center justify-center text-center gold-glow hover:scale-105 transition-transform">
+                        <span class="text-4xl mb-2">🃏</span>
+                        <span class="text-amber-300 font-black text-xs uppercase tracking-widest bg-purple-950/80 px-3 py-1 rounded-full border border-amber-400/40 mb-2">
+                            CARTA #${index + 1}
+                        </span>
+                        <span class="text-purple-200 text-xs font-semibold">✨ Toca para revelar ✨</span>
+                    </div>
+
+                    <!-- Contenido / Meme de la Carta (Back) -->
+                    <div class="card-back absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 border-2 border-purple-400/60 rounded-2xl p-4 flex flex-col items-center justify-between text-center shadow-2xl">
+                        <div class="text-xs font-bold text-amber-300">${data.title}</div>
+                        <div class="text-3xl my-1">${data.meme}</div>
+                        <p class="text-purple-100 text-[11px] md:text-xs leading-snug overflow-y-auto max-h-24 px-1">
+                            "${data.text}"
+                        </p>
+                        <span class="text-[10px] text-amber-400/80 font-bold uppercase tracking-wider">✔ Revelada</span>
+                    </div>
+                </div>
+            `;
+
+            deckGrid.appendChild(cardWrapper);
+        });
+
+        function flipCard(cardElement, index) {
+            // Si ya está volteada, no hacer nada
+            if (cardElement.classList.contains('flipped')) return;
+
+            cardElement.classList.add('flipped');
+            flippedCount++;
+            document.getElementById('flipped-count').innerText = flippedCount;
+
+            // Si descubrió las 13 cartas
+            if (flippedCount === totalCards) {
+                document.getElementById('success-banner').classList.remove('hidden');
+                document.getElementById('success-banner').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                confetti({
+                    particleCount: 150,
+                    spread: 100,
+                    origin: { y: 0.6 },
+                    colors: ['#c084fc', '#facc15', '#ffffff', '#e879f9']
+                });
+            }
+        }
+
+        // Background Sparkles Generator
+        const sparklesContainer = document.getElementById('sparkles-container');
+        const numSparkles = 25;
+
+        for (let i = 0; i < numSparkles; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            
+            const size = Math.random() * 4 + 2;
+            sparkle.style.width = `${size}px`;
+            sparkle.style.height = `${size}px`;
+            
+            sparkle.style.left = `${Math.random() * 100}%`;
+            sparkle.style.top = `${Math.random() * 100}%`;
+            
+            sparkle.style.animationDelay = `${Math.random() * 4}s`;
+            sparkle.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            
+            sparklesContainer.appendChild(sparkle);
+        }
+    </script>
+</body>
+</html>

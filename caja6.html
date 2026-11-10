@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Títulos & Apodos VIP 👑✨</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @keyframes sparkleFloat {
+            0% { transform: translateY(0px) scale(0.8); opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-30px) scale(1.2); opacity: 0; }
+        }
+        .sparkle {
+            position: absolute;
+            background-color: #facc15;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #facc15, 0 0 20px #e879f9;
+            animation: sparkleFloat 4s ease-in-out infinite alternate;
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 35px rgba(250, 204, 21, 0.4), inset 0 0 20px rgba(250, 204, 21, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen font-sans flex flex-col justify-between items-center relative overflow-x-hidden selection:bg-purple-500 selection:text-white">
+
+    <!-- Background Sparkles & Glow -->
+    <div id="sparkles-container" class="fixed inset-0 pointer-events-none z-0"></div>
+    <div class="fixed -top-24 -left-24 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+    <div class="fixed -bottom-24 -right-24 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-delay: 1.5s;"></div>
+
+    <!-- Top Navigation / Garlands -->
+    <header class="fixed top-0 inset-x-0 flex justify-between items-center px-6 py-3 z-30 backdrop-blur-sm bg-purple-950/20 border-b border-purple-500/20">
+        <a href="Index.html" class="group flex items-center gap-2 text-amber-300 font-bold text-xs uppercase border border-amber-400/40 px-3 py-1.5 rounded-full bg-purple-900/60 backdrop-blur-md shadow-lg transition-all hover:bg-amber-400 hover:text-slate-950">
+            <span>⬅️</span> Volver al VIP
+        </a>
+        <div class="text-amber-300 font-extrabold tracking-widest text-xs uppercase border border-amber-400/40 px-4 py-1.5 rounded-full bg-purple-900/60 backdrop-blur-md hidden md:block">
+            👑 CAJA 6: TÍTULOS & APODOS VIP
+        </div>
+        <div class="flex gap-2">
+            <span class="w-3 h-3 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc] animate-ping"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-300 shadow-[0_0_10px_#facc15] animate-ping" style="animation-delay: 0.3s;"></span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 w-full max-w-4xl px-4 pt-24 pb-12 flex flex-col items-center gap-6 text-center my-auto">
+        
+        <!-- Header Title -->
+        <div class="space-y-2">
+            <span class="text-amber-400 font-bold text-xs tracking-widest uppercase bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30">
+                🏆 Salón de la Fama del Sindicato 🏆
+            </span>
+            <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-amber-300 to-yellow-500">
+                Generador de Títulos & Apodos Locos
+            </h1>
+            <p class="text-purple-300/80 text-sm md:text-base max-w-lg mx-auto">
+                Descubre qué apodo oficial y récord multimillonario te otorga el búnker de comadres hoy.
+            </p>
+        </div>
+
+        <!-- Tarjeta del Título Generado -->
+        <div class="w-full max-w-lg bg-gradient-to-br from-purple-950 via-slate-900 to-purple-950 border-2 border-amber-400/80 rounded-3xl p-8 shadow-2xl backdrop-blur-xl gold-glow relative my-4">
+            <span class="text-5xl mb-3 block">📜✨</span>
+            <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2">Tu Título / Apodo Otorgado:</h3>
+            
+            <div id="title-display" class="text-xl md:text-2xl font-black text-amber-300 bg-purple-900/60 border border-purple-500/40 p-6 rounded-2xl my-4 shadow-inner min-h-[100px] flex items-center justify-center">
+                ¡Haz clic en el botón de abajo para revelar tu apodo de comadre multimillonaria! 👑
+            </div>
+
+            <button onclick="generateTitle()" class="bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 font-black px-8 py-3.5 rounded-full text-sm uppercase tracking-widest shadow-xl border-2 border-amber-200 hover:scale-105 active:scale-95 transition-all">
+                🎲 Generar Apodo o Título 🎲
+            </button>
+        </div>
+
+        <!-- Botones de Navegación Final -->
+        <div class="flex flex-wrap justify-center gap-4 py-2">
+            <a href="Index.html" class="bg-purple-900 hover:bg-purple-800 text-amber-300 border border-amber-400/40 font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wide transition-all shadow-lg">
+                Volver al Menú Principal 🚀
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-4 text-center text-xs text-purple-400/60 border-t border-purple-900/40 w-full">
+        Diseñado con 💜 para el cumpleaños de Dey (Tod)
+    </footer>
+
+    <!-- Script del Generador con los 13 Apodos -->
+    <script>
+        const titlesList = [
+            "👑 La Reina del Té de Cedrón y el Chisme Fresco",
+            "🚨 Emperatriz de las Llamadas a las 3:00 AM",
+            "🔥 Señora del Sindicato de Quema-Pueblos",
+            "💅 Alcaldesa Vitalicia de los Outfits Cancelados",
+            "🪙 Accionista Mayoritaria del Banco de Chismes",
+            "📲 Gran Maestra del Arte de Colgar el Teléfono",
+            "🍰 CEO de las Novelas Turcas y el Pastel Entero",
+            "🗡️ Asesina de Dramas y Egos Falsos con Dagas Ninja",
+            "🏰 Duquesa del Balcón para Juzgar Vecinos",
+            "✈️ Comisionada Especial de Viajes a Las Vegas en Rolplay",
+            "👻 Directora de Revivimiento de Espíritus Chismosos",
+            "🪦 Coleccionista Oficial de Lápidas por Diversión",
+            "✨ Comadre Suprema con Inmunidad al Caos Absoluto"
+        ];
+
+        function generateTitle() {
+            const display = document.getElementById('title-display');
+            
+            // Efecto visual de transición rápida
+            display.style.opacity = '0.3';
+            
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * titlesList.length);
+                display.innerText = `"${titlesList[randomIndex]}"`;
+                display.style.opacity = '1';
+
+                confetti({
+                    particleCount: 100,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    colors: ['#c084fc', '#facc15', '#ffffff', '#e879f9']
+                });
+            }, 150);
+        }
+
+        // Background Sparkles Generator
+        const sparklesContainer = document.getElementById('sparkles-container');
+        const numSparkles = 25;
+
+        for (let i = 0; i < numSparkles; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            
+            const size = Math.random() * 4 + 2;
+            sparkle.style.width = `${size}px`;
+            sparkle.style.height = `${size}px`;
+            
+            sparkle.style.left = `${Math.random() * 100}%`;
+            sparkle.style.top = `${Math.random() * 100}%`;
+            
+            sparkle.style.animationDelay = `${Math.random() * 4}s`;
+            sparkle.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            
+            sparklesContainer.appendChild(sparkle);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elige tu Regalo Misterioso VIP 🎁✨</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @keyframes sparkleFloat {
+            0% { transform: translateY(0px) scale(0.8); opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-30px) scale(1.2); opacity: 0; }
+        }
+        .sparkle {
+            position: absolute;
+            background-color: #facc15;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #facc15, 0 0 20px #e879f9;
+            animation: sparkleFloat 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg) scale(1); }
+            50% { transform: rotate(3deg) scale(1.05); }
+        }
+        .animate-wiggle { animation: wiggle 2.5s ease-in-out infinite; }
+
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(250, 204, 21, 0.4), inset 0 0 15px rgba(250, 204, 21, 0.2);
+        }
+
+        /* Animación para voltear/abrir la caja */
+        .gift-card {
+            perspective: 1000px;
+        }
+        .gift-inner {
+            transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .gift-card.opened .gift-inner {
+            transform: rotateY(180deg);
+        }
+        .gift-front, .gift-back {
+            backface-visibility: hidden;
+        }
+        .gift-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen font-sans flex flex-col justify-between items-center relative overflow-x-hidden selection:bg-purple-500 selection:text-white">
+
+    <!-- Background Sparkles & Glow -->
+    <div id="sparkles-container" class="fixed inset-0 pointer-events-none z-0"></div>
+    <div class="fixed -top-24 -left-24 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+    <div class="fixed -bottom-24 -right-24 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-delay: 1.5s;"></div>
+
+    <!-- Top Navigation / Garlands -->
+    <header class="fixed top-0 inset-x-0 flex justify-between items-center px-6 py-3 z-30 backdrop-blur-sm bg-purple-950/20 border-b border-purple-500/20">
+        <a href="Index.html" class="group flex items-center gap-2 text-amber-300 font-bold text-xs uppercase border border-amber-400/40 px-3 py-1.5 rounded-full bg-purple-900/60 backdrop-blur-md shadow-lg transition-all hover:bg-amber-400 hover:text-slate-950">
+            <span>⬅️</span> Volver al VIP
+        </a>
+        <div class="text-amber-300 font-extrabold tracking-widest text-xs uppercase border border-amber-400/40 px-4 py-1.5 rounded-full bg-purple-900/60 backdrop-blur-md hidden md:block">
+            🎁 CAJA 3: DESAFÍOS DE REGALOS MISTERIOSOS
+        </div>
+        <div class="flex gap-2">
+            <span class="w-3 h-3 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc] animate-ping"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-300 shadow-[0_0_10px_#facc15] animate-ping" style="animation-delay: 0.3s;"></span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 w-full max-w-5xl px-4 pt-24 pb-12 flex flex-col items-center gap-12 text-center my-auto">
+        
+        <!-- ========================================== -->
+        <!-- DESAFÍO 1: ELIGE TU CARRO MISTERIOSO      -->
+        <!-- ========================================== -->
+        <section class="w-full flex flex-col items-center gap-4 border-b border-purple-800/40 pb-10">
+            <div class="space-y-2">
+                <span class="text-amber-400 font-bold text-xs tracking-widest uppercase bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30">
+                    🏎️ Desafío #1 🏎️
+                </span>
+                <h2 class="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-amber-300 to-yellow-500">
+                    ¡Elige tu Carro, Tod!
+                </h2>
+                <p id="sub-instruction-1" class="text-purple-300/80 text-sm max-w-lg mx-auto font-semibold">
+                    ⚠️ Solo 1 caja por sección. ¡Cuidado con el diamante!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+                <!-- Carro Morado -->
+                <div id="c-1-1" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(1, 1, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-purple-800 to-purple-950 border-2 border-purple-400/60 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle">
+                            <span class="text-5xl mb-2">💜🎁</span>
+                            <span class="text-purple-200 font-black text-[10px] uppercase tracking-widest bg-purple-900/80 px-2 py-0.5 rounded border border-purple-400/40">MORADO VIP</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-purple-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-purple-300 font-bold text-xs uppercase">🔥 Carrazo Morado</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN CARRO MORADO: -->
+                            <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=400&q=80" alt="Carro Morado" class="w-full h-36 object-cover rounded-xl border border-purple-500/40">
+                            <p class="text-purple-200 text-[10px]">¡Superdeportivo neón morado! 🚗💨</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carro Azul -->
+                <div id="c-1-2" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(1, 2, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-blue-700 to-slate-950 border-2 border-blue-400/60 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.3s;">
+                            <span class="text-5xl mb-2">💙🎁</span>
+                            <span class="text-blue-200 font-black text-[10px] uppercase tracking-widest bg-blue-950/80 px-2 py-0.5 rounded border border-blue-400/40">AZUL REY</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-blue-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-blue-300 font-bold text-xs uppercase">⚡ Carrazo Azul</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN CARRO AZUL: -->
+                            <img src="https://images.unsplash.com/photo-1541348263662-e052662afda3?w=400&q=80" alt="Carro Azul" class="w-full h-36 object-cover rounded-xl border border-blue-500/40">
+                            <p class="text-purple-200 text-[10px]">Deportivo potente azul eléctrico. 🏎️✨</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carro Rosado -->
+                <div id="c-1-3" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(1, 3, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-pink-600 to-purple-950 border-2 border-pink-400/60 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.6s;">
+                            <span class="text-5xl mb-2">🩷🎁</span>
+                            <span class="text-pink-200 font-black text-[10px] uppercase tracking-widest bg-pink-950/80 px-2 py-0.5 rounded border border-pink-400/40">ROSA VIP</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-pink-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-pink-300 font-bold text-xs uppercase">💖 Carrazo Rosado</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN CARRO ROSA: -->
+                            <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?w=400&q=80" alt="Carro Rosa" class="w-full h-36 object-cover rounded-xl border border-pink-500/40">
+                            <p class="text-purple-200 text-[10px]">Superdeportivo rosado brillante. 🏁💅</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diamante (Troleo: Chancay Plateado/Gris) -->
+                <div id="c-1-4" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(1, 4, true)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-cyan-400 via-slate-700 to-slate-900 border-2 border-cyan-200 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.9s;">
+                            <span class="text-5xl mb-2">💎🎁</span>
+                            <span class="text-cyan-100 font-black text-[10px] uppercase tracking-widest bg-slate-900/80 px-2 py-0.5 rounded border border-cyan-400">DIAMANTE</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-slate-500 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-slate-300 font-black text-xs uppercase">🥖 ¡CHANCAY GRIS!</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN CHANCAY PLATEADO/GRIS: -->
+                            <img src="https://images.unsplash.com/photo-1589367920969-ab8e050bbc04?w=400&q=80" alt="Chancay Gris" class="w-full h-36 object-cover rounded-xl border border-slate-500">
+                            <p class="text-slate-300 text-[10px] font-bold">¡Un chancay plateado de 50 centavos! 😂</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="res-1" class="hidden text-sm font-bold text-amber-300 bg-purple-900/60 border border-amber-400/40 px-4 py-2 rounded-xl"></div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- DESAFÍO 2: ELIGE TU MANSIÓN MISTERIOSA     -->
+        <!-- ========================================== -->
+        <section class="w-full flex flex-col items-center gap-4 border-b border-purple-800/40 pb-10">
+            <div class="space-y-2">
+                <span class="text-amber-400 font-bold text-xs tracking-widest uppercase bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30">
+                    🏰 Desafío #2 🏰
+                </span>
+                <h2 class="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-amber-300 to-yellow-500">
+                    ¡Elige tu Mansión, Tod!
+                </h2>
+                <p id="sub-instruction-2" class="text-purple-300/80 text-sm max-w-lg mx-auto font-semibold">
+                    ⚠️ Mansiones temáticas por color y el diamante trampa.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+                <!-- Mansión Morada -->
+                <div id="c-2-1" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(2, 1, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-purple-800 to-purple-950 border-2 border-purple-400 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle">
+                            <span class="text-5xl mb-2">💜🏰</span>
+                            <span class="text-purple-200 font-black text-[10px] uppercase tracking-widest bg-purple-900/80 px-2 py-0.5 rounded border border-purple-400/40">MANSIÓN MORADA</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-purple-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-purple-300 font-bold text-xs uppercase">✨ Mansión Neón Morada</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN MANSIÓN MORADA: -->
+                            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80" alt="Mansión Morada" class="w-full h-36 object-cover rounded-xl border border-purple-500/40">
+                            <p class="text-purple-200 text-[10px]">Palacio gótico morado VIP. 🔮🏰</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mansión Azul -->
+                <div id="c-2-2" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(2, 2, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-blue-700 to-slate-950 border-2 border-blue-400 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.3s;">
+                            <span class="text-5xl mb-2">💙🏰</span>
+                            <span class="text-blue-200 font-black text-[10px] uppercase tracking-widest bg-blue-950/80 px-2 py-0.5 rounded border border-blue-400/40">MANSIÓN AZUL</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-blue-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-blue-300 font-bold text-xs uppercase">🌊 Villa Moderna Azul</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN MANSIÓN AZUL: -->
+                            <img src="https://images.unsplash.com/photo-1613977257363-707ba9348227?w=400&q=80" alt="Mansión Azul" class="w-full h-36 object-cover rounded-xl border border-blue-500/40">
+                            <p class="text-purple-200 text-[10px]">Espejo de agua e iluminación azul. 🏊‍♂️🏡</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mansión Rosa -->
+                <div id="c-2-3" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(2, 3, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-pink-600 to-purple-950 border-2 border-pink-400 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.6s;">
+                            <span class="text-5xl mb-2">🩷🏰</span>
+                            <span class="text-pink-200 font-black text-[10px] uppercase tracking-widest bg-pink-950/80 px-2 py-0.5 rounded border border-pink-400/40">MANSIÓN ROSA</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-pink-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-pink-300 font-bold text-xs uppercase">💖 Castillo Barbie VIP</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN MANSIÓN ROSA: -->
+                            <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&q=80" alt="Mansión Rosa" class="w-full h-36 object-cover rounded-xl border border-pink-500/40">
+                            <p class="text-purple-200 text-[10px]">Mansión de lujo estética rosada. 🌸✨</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diamante (Troleo: Choza gris/plateada) -->
+                <div id="c-2-4" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(2, 4, true)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-cyan-400 via-slate-700 to-slate-900 border-2 border-cyan-200 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.9s;">
+                            <span class="text-5xl mb-2">💎🏰</span>
+                            <span class="text-cyan-100 font-black text-[10px] uppercase tracking-widest bg-slate-900/80 px-2 py-0.5 rounded border border-cyan-400">DIAMANTE</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-slate-500 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-slate-300 font-black text-xs uppercase">🏚️ ¡CHOZA GRIS!</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN CHOZA GRIS: -->
+                            <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&q=80" alt="Choza Gris" class="w-full h-36 object-cover rounded-xl border border-slate-500">
+                            <p class="text-slate-300 text-[10px] font-bold">¡Una choza abandonada de tejas grises! 😂</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="res-2" class="hidden text-sm font-bold text-amber-300 bg-purple-900/60 border border-amber-400/40 px-4 py-2 rounded-xl"></div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- DESAFÍO 3: ELIGE TU TELÉFONO MISTERIOSO    -->
+        <!-- ========================================== -->
+        <section class="w-full flex flex-col items-center gap-4 border-b border-purple-800/40 pb-10">
+            <div class="space-y-2">
+                <span class="text-amber-400 font-bold text-xs tracking-widest uppercase bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30">
+                    📱 Desafío #3 📱
+                </span>
+                <h2 class="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-amber-300 to-yellow-500">
+                    ¡Elige tu Teléfono, Tod!
+                </h2>
+                <p id="sub-instruction-3" class="text-purple-300/80 text-sm max-w-lg mx-auto font-semibold">
+                    ⚠️ Teléfonos temáticos de alta gama y el diamante trampa.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+                <!-- Teléfono Morado -->
+                <div id="c-3-1" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(3, 1, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-purple-800 to-indigo-950 border-2 border-purple-400 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle">
+                            <span class="text-5xl mb-2">📱💜</span>
+                            <span class="text-purple-200 font-black text-[10px] uppercase tracking-widest bg-purple-950/80 px-2 py-0.5 rounded border border-purple-400/40">TELÉFONO MORADO</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-purple-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-purple-300 font-bold text-xs uppercase">📲 Flagship Morado</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN TELÉFONO MORADO: -->
+                            <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&q=80" alt="Teléfono Morado" class="w-full h-36 object-cover rounded-xl border border-purple-500/40">
+                            <p class="text-purple-200 text-[10px]">1TB para guardar audios de chismes. ☕📲</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teléfono Azul -->
+                <div id="c-3-2" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(3, 2, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-blue-700 to-slate-950 border-2 border-blue-400 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.3s;">
+                            <span class="text-5xl mb-2">📱💙</span>
+                            <span class="text-blue-200 font-black text-[10px] uppercase tracking-widest bg-blue-950/80 px-2 py-0.5 rounded border border-blue-400/40">TELÉFONO AZUL</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-blue-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-blue-300 font-bold text-xs uppercase">🌐 Celular Azul Neón</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN TELÉFONO AZUL: -->
+                            <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&q=80" alt="Teléfono Azul" class="w-full h-36 object-cover rounded-xl border border-blue-500/40">
+                            <p class="text-purple-200 text-[10px]">Diseño futurista en azul eléctrico. 🕹️🔥</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teléfono Rosa -->
+                <div id="c-3-3" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(3, 3, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-pink-600 to-purple-950 border-2 border-pink-400 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.6s;">
+                            <span class="text-5xl mb-2">📱🩷</span>
+                            <span class="text-pink-200 font-black text-[10px] uppercase tracking-widest bg-pink-950/80 px-2 py-0.5 rounded border border-pink-400/40">TELÉFONO ROSA</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-pink-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-pink-300 font-bold text-xs uppercase">✨ Plegable Rosa VIP</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN TELÉFONO ROSA: -->
+                            <img src="https://images.unsplash.com/photo-1546054454-aa26e2b734c7?w=400&q=80" alt="Teléfono Rosa" class="w-full h-36 object-cover rounded-xl border border-pink-500/40">
+                            <p class="text-purple-200 text-[10px]">Se dobla y brilla en tono rosado. 🪞✨</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diamante (Troleo: Ladrillo gris/plateado roto) -->
+                <div id="c-3-4" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(3, 4, true)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-cyan-400 via-slate-700 to-slate-900 border-2 border-cyan-200 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.9s;">
+                            <span class="text-5xl mb-2">💎📱</span>
+                            <span class="text-cyan-100 font-black text-[10px] uppercase tracking-widest bg-slate-900/80 px-2 py-0.5 rounded border border-cyan-400">DIAMANTE</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-slate-500 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-slate-300 font-black text-xs uppercase">🤡 ¡LADRILLO GRIS ROTO!</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN TELÉFONO ROTO GRIS: -->
+                            <img src="https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=400&q=80" alt="Teléfono Roto Gris" class="w-full h-36 object-cover rounded-xl border border-slate-500">
+                            <p class="text-slate-300 text-[10px] font-bold">¡Un celular plateado viejo con pantalla rota! 😂</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="res-3" class="hidden text-sm font-bold text-amber-300 bg-purple-900/60 border border-amber-400/40 px-4 py-2 rounded-xl"></div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- DESAFÍO 4: ELIGE TU MASCOTA VIP            -->
+        <!-- ========================================== -->
+        <section class="w-full flex flex-col items-center gap-4 pb-4">
+            <div class="space-y-2">
+                <span class="text-amber-400 font-bold text-xs tracking-widest uppercase bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30">
+                    🐾 Desafío #4 🐾
+                </span>
+                <h2 class="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-amber-300 to-yellow-500">
+                    ¡Elige tu Mascota VIP, Tod!
+                </h2>
+                <p id="sub-instruction-4" class="text-purple-300/80 text-sm max-w-lg mx-auto font-semibold">
+                    ⚠️ Compañeros fúnebres temáticos y el diamante trampa.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl">
+                <!-- Mascota Morada: Gato Místico -->
+                <div id="c-4-1" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(4, 1, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-purple-900 to-slate-950 border-2 border-purple-400 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle">
+                            <span class="text-5xl mb-2">🐈‍⬛💜</span>
+                            <span class="text-purple-200 font-black text-[10px] uppercase tracking-widest bg-purple-950/80 px-2 py-0.5 rounded border border-purple-400/40">GATO MORADO</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-purple-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-purple-300 font-bold text-xs uppercase">🐾 Gato Místico Morado</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN GATO MORADO/OSCURO: -->
+                            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&q=80" alt="Gato Morado" class="w-full h-36 object-cover rounded-xl border border-purple-500/40">
+                            <p class="text-purple-200 text-[10px]">Guardián de secretos y chismes. 🐈‍⬛✨</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mascota Azul: Búho Nocturno -->
+                <div id="c-4-2" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(4, 2, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-blue-900 to-purple-950 border-2 border-blue-400 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.3s;">
+                            <span class="text-5xl mb-2">🦉💙</span>
+                            <span class="text-blue-200 font-black text-[10px] uppercase tracking-widest bg-blue-950/80 px-2 py-0.5 rounded border border-blue-400/40">BÚHO AZUL</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-blue-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-blue-300 font-bold text-xs uppercase">🦉 Búho Nocturno Azul</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN BÚHO AZUL: -->
+                            <img src="https://images.unsplash.com/photo-1543549790-8b5f4a028cfb?w=400&q=80" alt="Búho Azul" class="w-full h-36 object-cover rounded-xl border border-blue-500/40">
+                            <p class="text-purple-200 text-[10px]">Acompaña las pláticas de 3:00 AM. 🦉☕</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mascota Rosa: Zorro o Conejo Rosado -->
+                <div id="c-4-3" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(4, 3, false)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-pink-600 to-purple-950 border-2 border-pink-400 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.6s;">
+                            <span class="text-5xl mb-2">🐰🩷</span>
+                            <span class="text-pink-200 font-black text-[10px] uppercase tracking-widest bg-pink-950/80 px-2 py-0.5 rounded border border-pink-400/40">MASCOTA ROSA</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-pink-400 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-pink-300 font-bold text-xs uppercase">🌸 Compañero Rosado VIP</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN MASCOTA ROSA: -->
+                            <img src="https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=400&q=80" alt="Conejo Rosa" class="w-full h-36 object-cover rounded-xl border border-pink-500/40">
+                            <p class="text-purple-200 text-[10px]">Ternura y buen gusto en el inframundo. 🐰✨</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diamante (Troleo: Lagartija gris/plateada) -->
+                <div id="c-4-4" class="gift-card w-full h-72 cursor-pointer select-none" onclick="openGift(4, 4, true)">
+                    <div class="gift-inner relative w-full h-full rounded-2xl shadow-xl">
+                        <div class="gift-front absolute inset-0 bg-gradient-to-br from-cyan-400 via-slate-700 to-slate-900 border-2 border-cyan-200 rounded-2xl p-4 flex flex-col items-center justify-center gold-glow animate-wiggle" style="animation-delay: 0.9s;">
+                            <span class="text-5xl mb-2">💎🦎</span>
+                            <span class="text-cyan-100 font-black text-[10px] uppercase tracking-widest bg-slate-900/80 px-2 py-0.5 rounded border border-cyan-400">DIAMANTE</span>
+                        </div>
+                        <div class="gift-back absolute inset-0 bg-slate-900 border-2 border-slate-500 rounded-2xl p-3 flex flex-col items-center justify-between overflow-hidden">
+                            <span class="text-slate-300 font-black text-xs uppercase">🤡 ¡LAGARTIJA GRIS!</span>
+                            <!-- 🛠️ CAMBIAR IMAGEN LAGARTIJA GRIS: -->
+                            <img src="https://images.unsplash.com/photo-1504450877761-0062e2491a78?w=400&q=80" alt="Lagartija Gris" class="w-full h-36 object-cover rounded-xl border border-slate-500">
+                            <p class="text-slate-300 text-[10px] font-bold">¡Una lagartija gris plateada de ventana! 😂🦎</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="res-4" class="hidden text-sm font-bold text-amber-300 bg-purple-900/60 border border-amber-400/40 px-4 py-2 rounded-xl"></div>
+        </section>
+
+        <!-- Botón Global de Retorno -->
+        <div class="py-6">
+            <a href="Index.html" class="bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black px-8 py-3 rounded-2xl text-sm uppercase tracking-wide transition-all shadow-lg hover:scale-105 inline-block">
+                Volver al VIP 🚀
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-4 text-center text-xs text-purple-400/60 border-t border-purple-900/40 w-full">
+        Diseñado con 💜 para el cumpleaños de Dey (Tod)
+    </footer>
+
+    <!-- Script Logic por Secciones -->
+    <script>
+        const state = { 1: false, 2: false, 3: false, 4: false };
+
+        function openGift(section, cardIndex, isTroll) {
+            if (state[section]) return;
+
+            state[section] = true;
+            const chosenCard = document.getElementById(`c-${section}-${cardIndex}`);
+            chosenCard.classList.add('opened');
+
+            for (let i = 1; i <= 4; i++) {
+                const card = document.getElementById(`c-${section}-${i}`);
+                card.classList.remove('cursor-pointer');
+                if (i !== cardIndex) {
+                    card.style.opacity = '0.4';
+                }
+            }
+
+            document.getElementById(`sub-instruction-${section}`).innerText = "🔒 Elección realizada en este desafío.";
+
+            const resDiv = document.getElementById(`res-${section}`);
+            resDiv.classList.remove('hidden');
+
+            if (isTroll) {
+                resDiv.innerHTML = "🤡 ¡CAÍSTE EN LA TRAMPA! Te fuiste por el diamante y te llevaste el artículo de plata/gris. 😂";
+                resDiv.className = "text-sm font-black text-red-400 bg-red-950/80 border border-red-500/50 px-4 py-2 rounded-xl animate-bounce";
+            } else {
+                resDiv.innerHTML = "🎉 ¡EXCELENTE ELECCIÓN! Te llevas un premio VIP digno de la Parca y Tod. 🚀✨";
+                resDiv.className = "text-sm font-black text-amber-300 bg-purple-900/80 border border-amber-400/50 px-4 py-2 rounded-xl animate-bounce";
+
+                confetti({
+                    particleCount: 70,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#c084fc', '#facc15', '#ffffff', '#e879f9']
+                });
+            }
+        }
+
+        // Background Sparkles Generator
+        const sparklesContainer = document.getElementById('sparkles-container');
+        const numSparkles = 25;
+
+        for (let i = 0; i < numSparkles; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            
+            const size = Math.random() * 4 + 2;
+            sparkle.style.width = `${size}px`;
+            sparkle.style.height = `${size}px`;
+            
+            sparkle.style.left = `${Math.random() * 100}%`;
+            sparkle.style.top = `${Math.random() * 100}%`;
+            
+            sparkle.style.animationDelay = `${Math.random() * 4}s`;
+            sparkle.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            
+            sparklesContainer.appendChild(sparkle);
+        }
+    </script>
+</body>
+</html>

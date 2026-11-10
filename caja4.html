@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruleta Secreta de Comadres & Caos 🎰✨</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @keyframes sparkleFloat {
+            0% { transform: translateY(0px) scale(0.8); opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-30px) scale(1.2); opacity: 0; }
+        }
+        .sparkle {
+            position: absolute;
+            background-color: #facc15;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #facc15, 0 0 20px #e879f9;
+            animation: sparkleFloat 4s ease-in-out infinite alternate;
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 35px rgba(250, 204, 21, 0.4), inset 0 0 20px rgba(250, 204, 21, 0.2);
+        }
+
+        /* Animación para levantar la tapa secreta */
+        .cover-hidden {
+            transform: scale(0) rotate(180deg);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .cover-visible {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white min-h-screen font-sans flex flex-col justify-between items-center relative overflow-x-hidden selection:bg-purple-500 selection:text-white">
+
+    <!-- Background Sparkles & Glow -->
+    <div id="sparkles-container" class="fixed inset-0 pointer-events-none z-0"></div>
+    <div class="fixed -top-24 -left-24 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+    <div class="fixed -bottom-24 -right-24 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-delay: 1.5s;"></div>
+
+    <!-- Top Navigation / Garlands -->
+    <header class="fixed top-0 inset-x-0 flex justify-between items-center px-6 py-3 z-30 backdrop-blur-sm bg-purple-950/20 border-b border-purple-500/20">
+        <a href="Index.html" class="group flex items-center gap-2 text-amber-300 font-bold text-xs uppercase border border-amber-400/40 px-3 py-1.5 rounded-full bg-purple-900/60 backdrop-blur-md shadow-lg transition-all hover:bg-amber-400 hover:text-slate-950">
+            <span>⬅️</span> Volver al VIP
+        </a>
+        <div class="text-amber-300 font-extrabold tracking-widest text-xs uppercase border border-amber-400/40 px-4 py-1.5 rounded-full bg-purple-900/60 backdrop-blur-md hidden md:block">
+            🎰 CAJA 4: RULETA SECRETA DE COMADRES & CAOS
+        </div>
+        <div class="flex gap-2">
+            <span class="w-3 h-3 rounded-full bg-purple-400 shadow-[0_0_10px_#c084fc] animate-ping"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-300 shadow-[0_0_10px_#facc15] animate-ping" style="animation-delay: 0.3s;"></span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 w-full max-w-4xl px-4 pt-24 pb-12 flex flex-col items-center gap-6 text-center my-auto">
+        
+        <!-- Header Title -->
+        <div class="space-y-2">
+            <span class="text-amber-400 font-bold text-xs tracking-widest uppercase bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/30">
+                🔥 Búnker Secreto de Chismes & Rol 🔥
+            </span>
+            <h1 class="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-amber-300 to-yellow-500">
+                Ruleta Secreta de Privilegios
+            </h1>
+            <p class="text-purple-300/80 text-sm md:text-base max-w-lg mx-auto">
+                Los 13 premios están ocultos bajo una tapa dorada secreta. ¡Gira para descubrir qué misión de caos te toca hoy con Tod!
+            </p>
+        </div>
+
+        <!-- Wheel Container -->
+        <div class="relative flex flex-col items-center justify-center my-4">
+            <!-- Indicator Flecha Superior -->
+            <div class="absolute -top-4 z-30 w-0 h-0 border-l-[16px] border-l-transparent border-r-[16px] border-r-transparent border-t-[30px] border-t-amber-400 drop-shadow-[0_4px_8px_rgba(250,204,21,0.8)]"></div>
+
+            <!-- Canvas de la Ruleta -->
+            <div class="relative border-4 border-amber-400/80 rounded-full p-2 bg-gradient-to-br from-purple-900 to-slate-950 gold-glow">
+                <canvas id="wheel-canvas" width="360" height="360" class="rounded-full shadow-2xl"></canvas>
+
+                <!-- Tapa Secreta que cubre la ruleta -->
+                <div id="secret-cover" class="absolute inset-2 bg-gradient-to-br from-purple-900 via-slate-900 to-purple-950 rounded-full border-4 border-amber-400 flex flex-col items-center justify-center z-20 cover-visible shadow-2xl">
+                    <span class="text-5xl mb-2">🔒✨</span>
+                    <h3 class="text-amber-300 font-black text-lg uppercase tracking-wider">SECRETO VIP (13)</h3>
+                    <p class="text-purple-200 text-xs px-6 mt-1">Los premios están ocultos hasta girar...</p>
+                </div>
+            </div>
+
+            <!-- Botón de Girar -->
+            <button id="spin-btn" onclick="spinWheel()" class="mt-6 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-slate-950 font-black px-8 py-3.5 rounded-full text-base uppercase tracking-widest shadow-xl border-2 border-amber-200 hover:scale-105 active:scale-95 transition-all">
+                🎰 ¡GIRAR RULETA SECRETA! 🎰
+            </button>
+        </div>
+
+        <!-- Banner del Premio Ganado -->
+        <div id="prize-modal" class="hidden w-full max-w-md bg-gradient-to-br from-purple-950 via-slate-900 to-purple-950 border-2 border-amber-400 rounded-3xl p-6 shadow-2xl backdrop-blur-xl animate-bounce">
+            <span class="text-4xl">🔥💅✨</span>
+            <h2 class="text-xl md:text-2xl font-black text-amber-300 mt-2 mb-1">
+                ¡MISIÓN DESBLOQUEADA!
+            </h2>
+            <div id="prize-text" class="text-purple-100 font-extrabold text-base md:text-lg bg-purple-900/60 border border-purple-500/40 p-3 rounded-2xl my-3 shadow-inner">
+                <!-- Premio Dinámico -->
+            </div>
+            <p class="text-purple-300/80 text-xs mb-4">
+                *Aprobado por el sindicato de comadres y parcas del inframundo.
+            </p>
+            <div class="flex justify-center gap-3">
+                <button onclick="closeModal()" class="bg-purple-900 hover:bg-purple-800 text-amber-300 border border-amber-400/40 font-bold px-4 py-2 rounded-xl text-xs uppercase transition-all">
+                    Girar de Nuevo 🔄
+                </button>
+                <a href="Index.html" class="bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 font-black px-5 py-2 rounded-xl text-xs uppercase tracking-wide transition-all shadow-lg hover:scale-105">
+                    Volver al VIP 🚀
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-4 text-center text-xs text-purple-400/60 border-t border-purple-900/40 w-full">
+        Diseñado con 💜 para el cumpleaños de Dey (Tod)
+    </footer>
+
+    <!-- Script de la Ruleta Secreta con 13 Opciones -->
+    <script>
+        const coupons = [
+            "✈️ ¡Vámonos a Las Vegas en rolplay!",
+            "🎯 ¡Vamos a fastidiar a alguien ya mismo!",
+            "🤝 ¡Vender a alguien a los árabes en rolplay!",
+            "🪦 Escribir nuestras lápidas por diversión",
+            "🔥 ¡Ir a quemar un pueblo entero!",
+            "👻 Revivir un espíritu para que traiga chismes",
+            "🫖 Jet privado para ir por té de cedrón",
+            "🗣️ Audio de 20 min soltando el peor chisme",
+            "🚨 Llamada de emergencia 3 AM por chisme",
+            "💅 Pase libre para cancelar outfits ajenos",
+            "🏰 Mansión con balcón para juzgar vecinos",
+            "🗡️ Inmunidad total en rol de combate",
+            "🍿 Sala VIP para ver el caos del mundo"
+        ];
+
+        const colors = [
+            "#6b21a8", "#b45309", "#581c87", "#78350f",
+            "#4c1d95", "#92400e", "#3b0764", "#b45309",
+            "#581c87", "#92400e", "#4c1d95", "#78350f", "#6b21a8"
+        ];
+
+        const canvas = document.getElementById('wheel-canvas');
+        const ctx = canvas.getContext('2d');
+        const numSegments = coupons.length;
+        const segmentAngle = (2 * Math.PI) / numSegments;
+        let currentAngle = 0;
+        let isSpinning = false;
+
+        function drawWheel() {
+            const radius = canvas.width / 2;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < numSegments; i++) {
+                const angle = currentAngle + i * segmentAngle;
+                ctx.beginPath();
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius - 5, angle, angle + segmentAngle);
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#facc15";
+                ctx.stroke();
+
+                // Texto oculto bajo la tapa
+                ctx.save();
+                ctx.translate(radius, radius);
+                ctx.rotate(angle + segmentAngle / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 8px sans-serif";
+                
+                let shortText = coupons[i].length > 16 ? coupons[i].substring(0, 14) + "..." : coupons[i];
+                ctx.fillText(shortText, radius - 15, 4);
+                ctx.restore();
+            }
+
+            // Centro Decorativo
+            ctx.beginPath();
+            ctx.arc(radius, radius, 30, 0, 2 * Math.PI);
+            ctx.fillStyle = "#0f172a";
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#facc15";
+            ctx.stroke();
+
+            ctx.fillStyle = "#facc15";
+            ctx.font = "bold 14px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("🔥", radius, radius);
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+
+            const spinButton = document.getElementById('spin-btn');
+            spinButton.disabled = true;
+            spinButton.style.opacity = '0.5';
+
+            document.getElementById('prize-modal').classList.add('hidden');
+
+            // Levantar la tapa secreta al girar
+            const cover = document.getElementById('secret-cover');
+            cover.classList.remove('cover-visible');
+            cover.classList.add('cover-hidden');
+
+            const extraRotations = 6 + Math.random() * 4;
+            const targetAngle = currentAngle + extraRotations * 2 * Math.PI;
+            const startTime = performance.now();
+            const duration = 4500;
+
+            function animate(time) {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                currentAngle = currentAngle + (targetAngle - currentAngle) * (easeOut * 0.05);
+
+                drawWheel();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    spinButton.disabled = false;
+                    spinButton.style.opacity = '1';
+
+                    const normalizedAngle = (2 * Math.PI - (currentAngle % (2 * Math.PI)) - Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI);
+                    const winningIndex = Math.floor(normalizedAngle / segmentAngle) % numSegments;
+
+                    showPrize(coupons[winningIndex]);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function showPrize(prizeText) {
+            document.getElementById('prize-text').innerText = prizeText;
+            const modal = document.getElementById('prize-modal');
+            modal.classList.remove('hidden');
+            modal.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            confetti({
+                particleCount: 130,
+                spread: 90,
+                origin: { y: 0.6 },
+                colors: ['#c084fc', '#facc15', '#ffffff', '#e879f9']
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('prize-modal').classList.add('hidden');
+            // Volver a colocar la tapa secreta para el próximo giro
+            const cover = document.getElementById('secret-cover');
+            cover.classList.remove('cover-hidden');
+            cover.classList.add('cover-visible');
+        }
+
+        // Background Sparkles Generator
+        const sparklesContainer = document.getElementById('sparkles-container');
+        const numSparkles = 25;
+
+        for (let i = 0; i < numSparkles; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            
+            const size = Math.random() * 4 + 2;
+            sparkle.style.width = `${size}px`;
+            sparkle.style.height = `${size}px`;
+            
+            sparkle.style.left = `${Math.random() * 100}%`;
+            sparkle.style.top = `${Math.random() * 100}%`;
+            
+            sparkle.style.animationDelay = `${Math.random() * 4}s`;
+            sparkle.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            
+            sparklesContainer.appendChild(sparkle);
+        }
+
+        drawWheel();
+    </script>
+</body>
+</html>
